@@ -8,7 +8,7 @@ import { createRoom, listRooms } from "./src/controllers/roomController.js";
 
 const io = new Server(server, {
     cors: {
-        origin: "http://127.0.0.1:8080",
+        origin: "http://localhost:8080",
         methods: ["GET", "POST"]
     }
 });
