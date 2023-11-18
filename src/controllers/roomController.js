@@ -21,39 +21,39 @@ export const createRoom = (req, res) => {
 
 export const listRooms = (req, res) => {
     Room.find({})
-    .exec((err, rooms) => {
-        if(err) {
-            res.status(400).send(err);
-        } else {
+    .then((rooms, err) => {
+        if(rooms) {
             res.status(200).json(rooms)
+        } else {
+            res.status(400).send(err);
         }
     });
 };
 
 export const getRoom = (req, res) => {
     Room.findById(req.params.id)
-    .exec((err, room) => {
-        if(err) {
-            res.status(400).send(err);
+    .then((room, err) => {
+        if(room) {
+            res.status(200).json(room)
         } else if(room == null) {
             res.sendStatus(404)
         } else {
-            res.status(200).json(room)
+            res.status(400).send(err);
         }
     });
 };
 
 export const updateRoom = (req, res) => {
     Room.findOneAndUpdate({"_id": req.params.id}, req.body, {new: true, useFindAndModify: false})
-    .exec((err, room) => {
+    .then((room, err) => {
         if(err) {
-            res.status(400).send(err);
+            res.status(200).json(room);
         } else {
             if(room == null) {
                 res.sendStatus(404);
             }
             else {
-                res.status(200).json(room);
+                res.status(400).send(err);
             }
         }
     });

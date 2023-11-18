@@ -20,31 +20,31 @@ export const createUser = (req, res) => {
 
 export const listUsers = (req, res) => {
     User.find({})
-    .exec((err, users) => {
-        if(err) {
-            res.status(400).send(err);
-        } else {
+    .then((users, err) => {
+        if(users) {
             res.status(200).json(users)
+        } else {
+            res.status(400).send(err);
         }
     });
 };
 
 export const getUser = (req, res) => {
     User.findById(req.params.id)
-    .exec((err, user) => {
-        if(err) {
-            res.status(400).send(err);
+    .then((user, err) => {
+        if(user) {
+            res.status(200).json(user)
         } else if(user === null) {
             res.sendStatus(404)
         } else {
-            res.status(200).json(user)
+            res.status(400).send(err);
         }
     });
 };
 
 export const login = (req, res) => {
     User.findOne({username: req.body.username})
-    .exec((err, user) => {
+    .then((user, err) => {
         if (user === null) {
             res.sendStatus(404)
         }
@@ -57,23 +57,22 @@ export const login = (req, res) => {
                 } else {
                     res.sendStatus(404)
                 } 
-              });
+            });
         }
     });
-   
 };
 
 export const updateUser = (req, res) => {
     User.findOneAndUpdate({"_id": req.params.id}, req.body, {new: true, useFindAndModify: false})
-    .exec((err, user) => {
-        if(err) {
-            res.status(400).send(err);
+    .then((user, err) => {
+        if(user) {
+            res.status(200).json(user);
         } else {
             if(user == null) {
                 res.sendStatus(404);
             }
             else {
-                res.status(200).json(user);
+                res.status(400).send(err);
             }
         }
     });
