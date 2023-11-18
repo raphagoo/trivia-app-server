@@ -5,8 +5,6 @@ let Schema = mongoose.Schema;
 import bcrypt from 'bcrypt';
 let SALT_WORK_FACTOR = 10;
 
-const ObjectId = mongoose.Schema.Types.ObjectId;
-
 export const UserSchema = new Schema({
     username: {
         type: String,
@@ -15,12 +13,7 @@ export const UserSchema = new Schema({
     password: {
         type: String,
         required: 'Password required'
-    },
-    races:[{
-        type: ObjectId,
-        ref: 'Room',
-        autopopulate: true
-    }]
+    }
 });
 
 UserSchema.pre('save', function(next) {

@@ -9,10 +9,10 @@ export function verifyJwt(req){
     }
     jwt.verify(token, 'mySuperSecrett', function(err, decoded){
         if(err){
-            console.log(err)
+            tokenVerified = false
         }
         else{
-            tokenVerified = true
+            tokenVerified = decoded
         }
     })
     return tokenVerified

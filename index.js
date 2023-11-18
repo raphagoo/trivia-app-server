@@ -3,7 +3,6 @@ let app = express();
 import http from 'http';
 let server = http.createServer(app);
 import { Server } from "socket.io";
-import { createRoom, listRooms } from "./src/controllers/roomController.js";
 
 
 const io = new Server(server, {
@@ -24,13 +23,10 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-Width, Content-Type, Accept");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-Width, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
     next();
 });
-
-
-export const autoIncrement = import('mongoose-auto-increment');
 
 // mongoose connection
 mongoose.Promise = global.Promise;
@@ -48,6 +44,16 @@ io.on('connection', (socket) => {
     socket.on('create_room', (message) => {
         console.log('Created room:', message);
         io.emit('create_room', message); // Broadcast the message to all connected clients
+    });
+
+    socket.on('join_room', (payload) => {
+        console.log('Joined room:', payload);
+        io.emit('join_room', payload); // Broadcast the message to all connected clients
+    });
+
+    socket.on('leave_room', (payload) => {
+        console.log('Left room:', payload);
+        io.emit('leave_room', payload); // Broadcast the message to all connected clients
     });
 
     // Handle disconnection event

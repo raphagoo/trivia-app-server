@@ -1,8 +1,11 @@
-import { createUser, login, listUsers, getUser, updateUser, deleteUser } from "../controllers/userController.js";
+import { createUser, login, listUsers, getUser, updateUser, deleteUser, createGuestUser } from "../controllers/userController.js";
 
 export const userRoutes = (app) => {
     app.route('/user/register')
         .post(createUser);
+
+    app.route('/user/guest')
+        .post(createGuestUser);
 
     app.route('/user/login')
         .post(login);
