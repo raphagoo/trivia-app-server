@@ -1,8 +1,11 @@
-import { createRoom, listRooms, getRoom, updateRoom, deleteRoom } from "../controllers/roomController.js";
+import { createRoom, joinRoom, listRooms, getRoom, updateRoom, deleteRoom } from "../controllers/roomController.js";
 
 export const roomRoutes = (app) => {
     app.route('/room')
         .post(createRoom);
+
+    app.route('/room/join/:id')
+        .post(joinRoom);
 
     app.route('/room')
         .get(listRooms);

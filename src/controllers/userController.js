@@ -16,6 +16,20 @@ export const createUser = (req, res) => {
     })
 };
 
+export const createGuestUser = (req, res) => {
+    let newUser = new User();
+    newUser.username = 'guest-' + Math.random().toString(16).slice(2);
+    newUser.password = 'password';
+    console.log(newUser)
+    newUser.save().then((user) => {
+        let token = jwt.sign({exp: Math.floor(Date.now() / 1000) + (60 * 60), data: user}, 'mySuperSecrett');
+        let response = {user: user, token: token}
+        res.status(201).json(response);
+    }).catch((err) => {
+        res.status(400).send(err);
+    })
+};
+
 export const listUsers = (req, res) => {
     User.find({})
     .then((users) => {

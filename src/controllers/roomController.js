@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { RoomSchema } from "../models/roomModel.js";
 import { verifyJwt } from '../services/jwtVerification.js';
 const Room = mongoose.model('Room', RoomSchema);
+import { jwtDecode } from "jwt-decode";
+
 
 export const createRoom = (req, res) => {
     //if(verifyJwt(req) === true){
@@ -16,6 +18,25 @@ export const createRoom = (req, res) => {
     //else{
         //res.sendStatus(403);
     //}
+};
+
+export const joinRoom = (req, res) => {
+    let token = verifyJwt(req)
+    if(token) {
+        Room.findOneAndUpdate({"_id": req.params.id}, {users: token.data}, {new: true, useFindAndModify: false})
+        .then((room) => {
+            if(room) {
+                res.status(200).json(room);
+            } else if(room == null) {
+                res.sendStatus(404);
+            }
+        }).catch((err) => {
+            res.status(400).send(err);
+        });
+    }
+    else{
+        res.sendStatus(403);
+    }
 };
 
 export const listRooms = (req, res) => {
