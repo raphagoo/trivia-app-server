@@ -34,15 +34,7 @@ export const autoIncrement = import('mongoose-auto-increment');
 
 // mongoose connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/trivia-app', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}, error => {
-    if(error) {
-        console.log(error);
-        process.exit(1);       
-    }
-});
+mongoose.connect('mongodb://localhost/trivia-app');
 
 // Routes initialisation
 userRoutes(app);
