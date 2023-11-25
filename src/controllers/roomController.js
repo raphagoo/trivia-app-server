@@ -23,7 +23,7 @@ export const createRoom = (req, res) => {
 export const joinRoom = (req, res) => {
     let token = verifyJwt(req)
     if(token) {
-        Room.findOneAndUpdate({"_id": req.params.id}, {users: token.data}, {new: true, useFindAndModify: false})
+        Room.findOneAndUpdate({"_id": req.params.id}, {$push: {users: token.data}}, {new: true, useFindAndModify: false})
         .then((room) => {
             if(room) {
                 res.status(200).json(room);
@@ -73,6 +73,23 @@ export const updateRoom = (req, res) => {
         res.status(400).send(err);
     });
 };
+
+export const removeUserFromRoom = (payload) => {
+    Room.findOneAndUpdate({"_id": payload.room}, {$pull : {'users': payload.user._id}}, {new: true, useFindAndModify: false})
+    .then((room) => {
+        console.log('rooms users', room)
+        if(room.users.length === 0) {
+            Room.findOneAndDelete({"_id": payload.room})
+            .then((room) => {
+                if(room) {
+                    console.log('deleted')
+                }
+            })
+        }
+    }).catch((err) => {
+        console.log(err)
+    });
+}
 
 export const deleteRoom = (req, res) => {
     Room.findOneAndDelete({"_id": req.params.id})
