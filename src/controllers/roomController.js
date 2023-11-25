@@ -6,29 +6,31 @@ import { jwtDecode } from "jwt-decode";
 
 
 export const createRoom = (req, res) => {
-    //if(verifyJwt(req) === true){
-        let newRoom = new Room(req.body);
+    let token = verifyJwt(req)
+    let toCreate = {name: req.body.name, owner: token.data};
+    if(token){
+        let newRoom = new Room(toCreate);
         newRoom.save()
         .then((room) => {
             res.status(201).json(room);
         }).catch((err) => {
             res.status(400).send(err);
         })
-    //}
-    //else{
-        //res.sendStatus(403);
-    //}
+    }
+    else{
+        res.sendStatus(403);
+    }
 };
 
 export const joinRoom = (req, res) => {
     let token = verifyJwt(req)
     if(token) {
-        Room.findOneAndUpdate({"_id": req.params.id}, {users: token.data}, {new: true, useFindAndModify: false})
+        Room.findOneAndUpdate({"_id": req.params.id}, {$push: {users: token.data}}, {new: true, useFindAndModify: false})
         .then((room) => {
-            if(room) {
-                res.status(200).json(room);
-            } else if(room == null) {
+            if(!room) {
                 res.sendStatus(404);
+            } else {
+                res.status(200).json(room);
             }
         }).catch((err) => {
             res.status(400).send(err);
@@ -38,6 +40,23 @@ export const joinRoom = (req, res) => {
         res.sendStatus(403);
     }
 };
+
+export const removeUserFromRoom = (payload) => {
+    Room.findOneAndUpdate({"_id": payload.room}, {$pull : {'users': payload.user._id}}, {new: true, useFindAndModify: false})
+    .then((room) => {
+        console.log('rooms users', room)
+        if(room.users.length === 0) {
+            Room.findOneAndDelete({"_id": payload.room})
+            .then((room) => {
+                if(room) {
+                    console.log('deleted')
+                }
+            })
+        }
+    }).catch((err) => {
+        console.log(err)
+    });
+}
 
 export const listRooms = (req, res) => {
     Room.find({})

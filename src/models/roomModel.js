@@ -14,6 +14,10 @@ export const RoomSchema = new Schema({
         type: ObjectId,
         ref: 'User',
         autopopulate: true
-    }]
+    }],
+    owner: {
+        type: ObjectId,
+        ref: 'User',
+    }
 });
 RoomSchema.plugin(autopopulate);

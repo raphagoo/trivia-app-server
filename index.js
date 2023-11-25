@@ -17,6 +17,7 @@ import mongoose from 'mongoose';
 
 import { userRoutes } from "./src/routes/userRoutes.js";
 import { roomRoutes } from "./src/routes/roomRoutes.js";
+import { removeUserFromRoom } from './src/controllers/roomController.js';
 
 
 app.use(express.urlencoded({extended: true}));
@@ -51,10 +52,12 @@ io.on('connection', (socket) => {
         io.emit('join_room', payload); // Broadcast the message to all connected clients
     });
 
-    socket.on('leave_room', (payload) => {
+    socket.on('leave_room', payload => {
         console.log('Left room:', payload);
+        removeUserFromRoom(payload);
         io.emit('leave_room', payload); // Broadcast the message to all connected clients
     });
+
 
     // Handle disconnection event
     socket.on('disconnect', () => {
