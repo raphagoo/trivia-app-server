@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import { RoomSchema } from "../models/roomModel.js";
 import { verifyJwt } from '../services/jwtVerification.js';
 const Room = mongoose.model('Room', RoomSchema);
-import { jwtDecode } from "jwt-decode";
 
 
 export const createRoom = (req, res) => {

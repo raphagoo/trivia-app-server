@@ -17,7 +17,9 @@ import mongoose from 'mongoose';
 
 import { userRoutes } from "./src/routes/userRoutes.js";
 import { roomRoutes } from "./src/routes/roomRoutes.js";
+import { triviaRoutes } from './src/routes/triviaRoutes.js';
 import { removeUserFromRoom } from './src/controllers/roomController.js';
+
 
 
 app.use(express.urlencoded({extended: true}));
@@ -36,6 +38,7 @@ mongoose.connect('mongodb://localhost/trivia-app');
 // Routes initialisation
 userRoutes(app);
 roomRoutes(app);
+triviaRoutes(app);
 
 // Define a connection event for Socket.io
 io.on('connection', (socket) => {
