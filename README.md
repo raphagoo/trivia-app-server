@@ -1,7 +1,6 @@
-# Node starter
+# trivia api
 
-[![Dependency Status](https://david-dm.org/raphagoo/runningManAPI/status.svg)](https://david-dm.org/raphagoo/runningManAPI#info=dependencies) 
-[![devDependency Status](https://david-dm.org/raphagoo/runningManAPI/dev-status.svg)](https://david-dm.org/raphagoo/runningManAPI#info=devDependencies)
+[![Depfu](https://badges.depfu.com/badges/5a5ed67ce498227e779d96e079019562/count.svg)](https://depfu.com/repos/github/raphagoo/trivia-app-server?project_id=39494)
 
 Agostini Raphael
 
