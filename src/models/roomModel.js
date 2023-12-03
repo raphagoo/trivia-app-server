@@ -10,6 +10,10 @@ export const RoomSchema = new Schema({
         type: String,
         required: 'name required'
     },
+    inGame: {
+        type: Boolean,
+        required: 'inGame required'
+    },
     users:[{
         type: ObjectId,
         ref: 'User',

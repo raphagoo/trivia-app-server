@@ -18,7 +18,9 @@ import mongoose from 'mongoose';
 import { userRoutes } from "./src/routes/userRoutes.js";
 import { roomRoutes } from "./src/routes/roomRoutes.js";
 import { triviaRoutes } from './src/routes/triviaRoutes.js';
-import { removeUserFromRoom } from './src/controllers/roomController.js';
+import { removeUserFromRoom, startGame } from './src/controllers/roomController.js';
+import { checkAnswer } from './src/controllers/answerController.js';
+import { getQuestions } from './src/controllers/triviaController.js';
 
 
 
@@ -60,6 +62,25 @@ io.on('connection', (socket) => {
         removeUserFromRoom(payload);
         io.emit('leave_room', payload); // Broadcast the message to all connected clients
     });
+
+    socket.on('generate_quizz', payload => {
+        getQuestions(payload).then((questions) => {
+            io.emit('generate_quizz', {questions});
+        })
+    });
+
+    socket.on('start_game', payload => {
+        startGame(payload).then((room) => {
+            io.emit('start_game', {room: room});
+        })
+    });
+
+    socket.on('check_answer', payload => {
+        checkAnswer(payload).then((correct) => {
+            io.emit('checked_answer', {correct: correct, user: payload.user._id});
+        })
+    });
+
 
 
     // Handle disconnection event
