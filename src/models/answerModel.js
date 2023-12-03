@@ -5,23 +5,19 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const Schema = mongoose.Schema;
 
-export const RoomSchema = new Schema({
-    name: {
+export const AnswerSchema = new Schema({
+    answer: {
         type: String,
-        required: 'name required'
+        required: 'question required'
     },
-    inGame: {
+    correct: {
         type: Boolean,
-        required: 'inGame required'
+        required: 'correct required'
     },
-    users:[{
+    question:{
         type: ObjectId,
-        ref: 'User',
+        ref: 'Question',
         autopopulate: true
-    }],
-    owner: {
-        type: ObjectId,
-        ref: 'User',
-    }
+    },
 });
-RoomSchema.plugin(autopopulate);
+AnswerSchema.plugin(autopopulate);

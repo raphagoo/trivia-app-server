@@ -2,12 +2,11 @@ import mongoose from 'mongoose';
 import { RoomSchema } from "../models/roomModel.js";
 import { verifyJwt } from '../services/jwtVerification.js';
 const Room = mongoose.model('Room', RoomSchema);
-import { jwtDecode } from "jwt-decode";
 
 
 export const createRoom = (req, res) => {
     let token = verifyJwt(req)
-    let toCreate = {name: req.body.name, owner: token.data};
+    let toCreate = {name: req.body.name, owner: token.data, inGame: false};
     if(token){
         let newRoom = new Room(toCreate);
         newRoom.save()
@@ -104,4 +103,15 @@ export const deleteRoom = (req, res) => {
     }).catch((err) => {
         res.status(400).send(err);
     });
+};
+
+export const startGame = (payload) => {
+    return new Promise((resolve, reject) => {
+        Room.findOneAndUpdate({"_id": payload.room}, { ingame: true }, { new: true, useFindAndModify: false })
+        .then((room) => {
+            resolve(room)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
 };
