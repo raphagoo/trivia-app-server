@@ -24,7 +24,6 @@ import { getQuestions } from './src/controllers/triviaController.js';
 
 
 
-
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use((req, res, next) => {
