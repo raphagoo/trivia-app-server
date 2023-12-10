@@ -5,7 +5,6 @@ const Answer = mongoose.model('Answer', AnswerSchema);
 
 export const checkAnswer = (payload) => {
     return new Promise((resolve, reject) => {
-        console.log('test');
         Answer.findById(payload.answer._id)
             .then((answer) => {
                 if (answer) {

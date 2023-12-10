@@ -38,7 +38,7 @@ export const getQuestions = (payload) => {
                 return Question.findOne({ question: questionData.question.text })
                 .then((question) => {
                     if (question) {
-                        return null; // Skip saving the question and associated answers
+                        return question; // Skip saving the question and associated answers
                     }
 
                     const newQuestion = new Question({
@@ -86,10 +86,7 @@ export const getQuestions = (payload) => {
             }));
         })
         .then(savedQuestions => {
-            // Filter out null values (skipped questions)
-            const filteredSavedQuestions = savedQuestions.filter(question => question !== null);
-
-            return Question.find({ _id: { $in: filteredSavedQuestions.map(q => q._id) } })
+            return Question.find({ _id: { $in: savedQuestions.map(q => q._id) } })
             .populate('answers') // Populate the 'answers' field in the questions
             .exec();
         })
