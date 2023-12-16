@@ -118,7 +118,7 @@ export const startGame = (payload) => {
 
 export const endGame = (payload) => {
     return new Promise((resolve, reject) => {
-        Room.findOneAndUpdate({"_id": payload.room}, { inGame: false }, { new: true, useFindAndModify: false })
+        Room.findOneAndUpdate({"_id": payload.room}, { inGame: false, difficulties: '', time: '', tags: '' }, { new: true, useFindAndModify: false })
         .then((room) => {
             resolve(room)
         }).catch((err) => {

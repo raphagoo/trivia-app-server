@@ -61,8 +61,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('generate_quizz', payload => {
-        getQuestions(payload).then((questions) => {
-            io.emit('generate_quizz', {questions});
+        getQuestions(payload).then((content) => {
+            io.emit('generate_quizz', {content});
         })
     });
 
@@ -74,7 +74,7 @@ io.on('connection', (socket) => {
 
     socket.on('check_answer', payload => {
         checkAnswer(payload).then((correct) => {
-            io.emit('checked_answer', {correct: correct, user: payload.user._id});
+            io.emit('checked_answer', {correct: correct, userId: payload.user._id});
         })
     });
 

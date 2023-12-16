@@ -3,9 +3,11 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { QuestionSchema } from "../models/questionModel.js";
+import { RoomSchema } from "../models/roomModel.js";
 import { AnswerSchema } from '../models/answerModel.js';
 const Question = mongoose.model('Question', QuestionSchema);
 const Answer = mongoose.model('Answer', AnswerSchema);
+const Room = mongoose.model('Room', RoomSchema);
 dotenv.config();
 const apiUrl = process.env.TRIVIA_API
 
@@ -25,6 +27,8 @@ export const getQuestions = (payload) => {
         let filters = '/questions?limit=3&difficulties=' + payload.difficulties
         if(payload.tags !== '') {
             filters += '&tags=' + payload.tags
+        } else {
+            payload.tags = 'general'
         }
         axios.get(apiUrl + filters, {
             headers: { 'Accept': 'application/json' }
@@ -91,7 +95,10 @@ export const getQuestions = (payload) => {
             .exec();
         })
         .then(updatedQuestions => {
-            resolve(updatedQuestions)
+            resolve({questions: updatedQuestions, time: payload.time})
+        })
+        .then(() => {
+            Room.findOneAndUpdate({"_id": payload.room}, { difficulties: payload.difficulties, time: payload.time, tags: payload.tags }, { new: true, useFindAndModify: false })
         })
         .catch(error => {
             reject(error)

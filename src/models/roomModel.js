@@ -14,6 +14,15 @@ export const RoomSchema = new Schema({
         type: Boolean,
         required: 'inGame required'
     },
+    difficulties: {
+        type: String
+    },
+    time: {
+        type: String
+    },
+    tags: {
+        type: String
+    },
     users:[{
         type: ObjectId,
         ref: 'User',
