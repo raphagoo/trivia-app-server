@@ -18,7 +18,7 @@ import mongoose from 'mongoose';
 import { userRoutes } from "./src/routes/userRoutes.js";
 import { roomRoutes } from "./src/routes/roomRoutes.js";
 import { triviaRoutes } from './src/routes/triviaRoutes.js';
-import { removeUserFromRoom, startGame } from './src/controllers/roomController.js';
+import { endGame, removeUserFromRoom, startGame } from './src/controllers/roomController.js';
 import { checkAnswer } from './src/controllers/answerController.js';
 import { getQuestions } from './src/controllers/triviaController.js';
 
@@ -48,38 +48,41 @@ io.on('connection', (socket) => {
 
     // Handle custom events
     socket.on('create_room', (message) => {
-        console.log('Created room:', message);
         io.emit('create_room', message); // Broadcast the message to all connected clients
     });
 
     socket.on('join_room', (payload) => {
-        console.log('Joined room:', payload);
         io.emit('join_room', payload); // Broadcast the message to all connected clients
     });
 
     socket.on('leave_room', payload => {
-        console.log('Left room:', payload);
         removeUserFromRoom(payload);
         io.emit('leave_room', payload); // Broadcast the message to all connected clients
     });
 
     socket.on('generate_quizz', payload => {
-        getQuestions(payload).then((questions) => {
-            io.emit('generate_quizz', {questions});
+        getQuestions(payload).then((content) => {
+            io.emit('generate_quizz', {content});
         })
     });
 
     socket.on('start_game', payload => {
         startGame(payload).then((room) => {
-            io.emit('start_game', {room: room});
+            io.emit('started_game', {room: room});
         })
     });
 
     socket.on('check_answer', payload => {
         checkAnswer(payload).then((correct) => {
-            io.emit('checked_answer', {correct: correct, user: payload.user._id});
+            io.emit('checked_answer', {correct: correct, userId: payload.user._id});
         })
     });
+
+    socket.on('end_game', payload => {
+        endGame(payload).then((room) => {
+            io.emit('end_game', {room: room})
+        })
+    })
 
 
 
