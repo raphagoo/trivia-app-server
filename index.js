@@ -73,8 +73,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('check_answer', payload => {
-        checkAnswer(payload).then((correct) => {
-            io.emit('checked_answer', {correct: correct, userId: payload.user._id});
+        checkAnswer(payload).then((answer) => {
+            io.emit('checked_answer', {correct: answer.correct, answerCorrectId: answer.answerCorrectId, userId: payload.user._id});
         })
     });
 
