@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 
     socket.on('start_game', payload => {
         startGame(payload).then((room) => {
-            io.emit('started_game', {room: room});
+            io.emit('started_game', room);
         })
     });
 
@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
 
     socket.on('end_game', payload => {
         endGame(payload).then((room) => {
-            io.emit('end_game', {room: room})
+            io.emit('end_game', room)
         })
     })
 
