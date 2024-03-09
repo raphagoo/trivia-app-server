@@ -12,7 +12,8 @@ dotenv.config();
 const apiUrl = process.env.TRIVIA_API
 
 export const getAllTags = (req, res) => {
-    axios.get(apiUrl + '/totals-per-tag?difficulties=' + req.query.difficulties, {
+    let difficulties = req.query.difficulties.toLowerCase()
+    axios.get(apiUrl + '/totals-per-tag?difficulties=' + difficulties, {
         headers: {'Accept': 'application/json'}
     })
     .then((response) => {
@@ -24,7 +25,8 @@ export const getAllTags = (req, res) => {
 
 export const getQuestions = (payload) => {
     return new Promise((resolve, reject) => {
-        let filters = '/questions?limit=3&difficulties=' + payload.difficulties
+        let difficulties = payload.difficulties.toLowerCase()
+        let filters = '/questions?limit=3&difficulties=' + difficulties
         if(payload.tags !== '') {
             filters += '&tags=' + payload.tags
         } else {

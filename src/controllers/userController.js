@@ -5,16 +5,45 @@ import bcrypt from 'bcrypt';
 
 const User = mongoose.model('User', UserSchema);
 
+function generateRefreshToken(user) {
+    return jwt.sign({data: user}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1y' });
+}
+
+function generateAccessToken(user) {
+    return jwt.sign({data: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+}
+
 export const createUser = (req, res) => {
     let newUser = new User(req.body);
     newUser.save().then((user) => {
-        //let token = jwt.sign({exp: Math.floor(Date.now() / 1000) + (60 * 60), data: user}, 'mySuperSecrett');
-        //let response = {user: user,token: token}
-        res.status(201).json(user);
+        let token = generateAccessToken(user);
+        let refreshToken = generateRefreshToken(user);
+        let response = {user: user, token: token, refresh: refreshToken}
+        res.status(201).json(response);
     }).catch((err) => {
         res.status(400).send(err);
     })
 };
+export const refreshToken = (req, res) => {
+    const token = req.headers['x-access-token'] || req.headers['authorization'];
+    
+    if (token.startsWith('Bearer ')) {
+        // Remove Bearer from string
+        token = token.slice(7, token.length);
+    }
+
+    if (token === null) return res.sendStatus(401)
+
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) {
+            return res.sendStatus(401)
+        }
+        const refreshedToken = generateAccessToken(user);
+        res.send({
+            token: refreshedToken
+        });
+    });
+}
 
 export const createGuestUser = (req, res) => {
     let newUser = new User();
@@ -22,7 +51,7 @@ export const createGuestUser = (req, res) => {
     newUser.password = 'password';
     console.log(newUser)
     newUser.save().then((user) => {
-        let token = jwt.sign({exp: Math.floor(Date.now() / 1000) + (60 * 60), data: user}, 'mySuperSecrett');
+        let token = generateAccessToken(user);
         let response = {user: user, token: token}
         res.status(201).json(response);
     }).catch((err) => {
@@ -61,8 +90,9 @@ export const login = (req, res) => {
         else {
             bcrypt.compare(req.body.password, user.password, function(err, response) {
                 if(response) {
-                    let token = jwt.sign({exp: Math.floor(Date.now() / 1000) + (60 * 60), data: {username: user.username}}, 'mySuperSecrett');
-                    const response = {user: user, token: token}
+                    let token = generateAccessToken(user);
+                    let refreshToken = generateRefreshToken(user);
+                    const response = {user: user, token: token, refresh: refreshToken}
                     res.status(200).json(response)
                 } else {
                     res.sendStatus(404)
