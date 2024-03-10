@@ -26,7 +26,7 @@ export const getAllTags = (req, res) => {
 export const getQuestions = (payload) => {
     return new Promise((resolve, reject) => {
         let difficulties = payload.difficulties.toLowerCase()
-        let filters = '/questions?limit=3&difficulties=' + difficulties
+        let filters = '/questions?limit=' + payload.questions + '&difficulties=' + difficulties
         if(payload.tags !== '') {
             filters += '&tags=' + payload.tags
         } else {
@@ -92,15 +92,24 @@ export const getQuestions = (payload) => {
             }));
         })
         .then(savedQuestions => {
-            return Question.find({ _id: { $in: savedQuestions.map(q => q._id) } })
-            .populate('answers') // Populate the 'answers' field in the questions
-            .exec();
-        })
-        .then(updatedQuestions => {
-            resolve({questions: updatedQuestions, time: payload.time})
-        })
-        .then(() => {
-            Room.findOneAndUpdate({"_id": payload.room}, { difficulties: payload.difficulties, time: payload.time, tags: payload.tags }, { new: true, useFindAndModify: false })
+            const updatedQuestions = savedQuestions.map((question, index) => ({
+                question: question._id,
+                order: index + 1,
+            }));
+            const currentIndex = 0;
+            Room.findOneAndUpdate({"_id": payload.room},  {
+                    $push: { questions: { $each: updatedQuestions } },
+                    $set: {
+                        difficulties: payload.difficulties,
+                        time: payload.time,
+                        tags: payload.tags,
+                        currentIndex: currentIndex,
+                        currentQuestion: updatedQuestions[currentIndex].question
+                    }
+                }, { new: true, useFindAndModify: false })
+            .then((room) => {
+                resolve(room)
+            })
         })
         .catch(error => {
             reject(error)

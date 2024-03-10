@@ -18,7 +18,7 @@ import mongoose from 'mongoose';
 import { userRoutes } from "./src/routes/userRoutes.js";
 import { roomRoutes } from "./src/routes/roomRoutes.js";
 import { triviaRoutes } from './src/routes/triviaRoutes.js';
-import { endGame, removeUserFromRoom, startGame } from './src/controllers/roomController.js';
+import { endGame, removeUserFromRoom, startGame, nextQuestion } from './src/controllers/roomController.js';
 import { checkAnswer } from './src/controllers/answerController.js';
 import { getQuestions } from './src/controllers/triviaController.js';
 
@@ -61,10 +61,16 @@ io.on('connection', (socket) => {
     });
 
     socket.on('generate_quizz', payload => {
-        getQuestions(payload).then((content) => {
-            io.emit('generate_quizz', {content});
+        getQuestions(payload).then((room) => {
+            io.emit('generate_quizz', {room});
         })
     });
+
+    socket.on('next_question', payload => {
+        nextQuestion(payload).then((room) => {
+            io.emit('next_question', room);
+        })
+    })
 
     socket.on('start_game', payload => {
         startGame(payload).then((room) => {

@@ -25,7 +25,7 @@ export const createUser = (req, res) => {
     })
 };
 export const refreshToken = (req, res) => {
-    const token = req.headers['x-access-token'] || req.headers['authorization'];
+    let token = req.headers['x-access-token'] || req.headers['authorization'];
     
     if (token.startsWith('Bearer ')) {
         // Remove Bearer from string

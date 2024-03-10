@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import { RoomSchema } from "../models/roomModel.js";
 import { verifyJwt } from '../services/jwtVerification.js';
+import { QuestionSchema } from '../models/questionModel.js';
 const Room = mongoose.model('Room', RoomSchema);
+const Question = mongoose.model('Question', QuestionSchema);
 
 
 export const createRoom = (req, res) => {
@@ -17,7 +19,7 @@ export const createRoom = (req, res) => {
         })
     }
     else{
-        res.sendStatus(403);
+        res.sendStatus(401);
     }
 };
 
@@ -36,7 +38,7 @@ export const joinRoom = (req, res) => {
         });
     }
     else{
-        res.sendStatus(403);
+        res.sendStatus(401);
     }
 };
 
@@ -115,6 +117,47 @@ export const startGame = (payload) => {
         })
     })
 };
+
+export const getQuestion = (req, res) => {
+    Room.findById(req.params.id)
+    .then((room) => {
+        if(room) {
+            Question.findById(room.currentQuestion)
+            .then((question) => {
+                res.status(200).json(question)
+            }).catch((err) => {
+                res.status(400).send(err);
+            });
+        } else if(room === null) {
+            res.sendStatus(404)
+        }
+    }).catch((err) => {
+        res.status(400).send(err);
+    });
+}
+
+export const nextQuestion = (payload) => {
+    return new Promise((resolve, reject) => {
+        Room.findById(payload.room)
+        .then(room => {
+            if (!room) {
+                reject('Room not found');
+            }
+
+            room.currentIndex = room.currentIndex + 1;
+            if(room.currentIndex === room.questions.length - 1) {
+                room.inGame = false;
+            }
+            room.currentQuestion = room.questions[room.currentIndex].question;
+            room.save()
+            .then((room) => {
+                resolve(room);
+            }).catch((err) => {
+                reject(err);
+            });
+        })
+    })
+}
 
 export const endGame = (payload) => {
     return new Promise((resolve, reject) => {
