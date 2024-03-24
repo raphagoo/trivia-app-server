@@ -145,23 +145,32 @@ export const nextQuestion = (payload) => {
             }
 
             room.currentIndex = room.currentIndex + 1;
-            if(room.currentIndex === room.questions.length - 1) {
+            console.log('questionss', room.questions.length, room.currentIndex)
+            if(room.currentIndex === room.questions.length) {
                 room.inGame = false;
-            }
-            room.currentQuestion = room.questions[room.currentIndex].question;
-            room.save()
-            .then((room) => {
                 resolve(room);
-            }).catch((err) => {
-                reject(err);
-            });
+            } else {
+                room.currentQuestion = room.questions[room.currentIndex].question;
+                room.save()
+                .then((room) => {
+                    Question.findById(room.currentQuestion)
+                    .then((question) => {
+                        resolve({room, question});
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }).catch((err) => {
+                    reject(err);
+                });
+            }
         })
     })
 }
 
+
 export const endGame = (payload) => {
     return new Promise((resolve, reject) => {
-        Room.findOneAndUpdate({"_id": payload.room}, { inGame: false, difficulties: '', time: '', tags: '' }, { new: true, useFindAndModify: false })
+        Room.findOneAndUpdate({"_id": payload.room}, { inGame: false, difficulties: '', time: '', tags: '', currentIndex: 0, currentQuestion: null, questions: [] }, { new: true, useFindAndModify: false })
         .then((room) => {
             resolve(room)
         }).catch((err) => {

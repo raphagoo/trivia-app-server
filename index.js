@@ -67,8 +67,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('next_question', payload => {
-        nextQuestion(payload).then((room) => {
-            io.emit('next_question', room);
+        nextQuestion(payload).then((response) => {
+            io.emit('next_question', response);
         })
     })
 
