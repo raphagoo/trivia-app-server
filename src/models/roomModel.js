@@ -31,6 +31,30 @@ export const RoomSchema = new Schema({
     owner: {
         type: ObjectId,
         ref: 'User',
+    },
+    questions: [{
+        question: {
+            type: ObjectId,
+            ref: 'Question',
+        },
+        order: {
+            type: Number,
+            required: 'order required'
+        }
+    }],
+    currentIndex: {
+        type: Number,
+    },
+    currentQuestion: {
+        type: ObjectId,
+        ref: 'Question',
+    },
+}, 
+{
+    toJSON: {
+        transform: function (doc, ret) {
+            delete ret.questions;
+        }
     }
 });
 RoomSchema.plugin(autopopulate);
