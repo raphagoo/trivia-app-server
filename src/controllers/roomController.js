@@ -45,14 +45,8 @@ export const joinRoom = (req, res) => {
 export const removeUserFromRoom = (payload) => {
     Room.findOneAndUpdate({"_id": payload.room}, {$pull : {'users': payload.user._id}}, {new: true, useFindAndModify: false})
     .then((room) => {
-        console.log('rooms users', room)
         if(room.users.length === 0) {
             Room.findOneAndDelete({"_id": payload.room})
-            .then((room) => {
-                if(room) {
-                    console.log('deleted')
-                }
-            })
         }
     }).catch((err) => {
         console.log(err)
@@ -145,7 +139,6 @@ export const nextQuestion = (payload) => {
             }
 
             room.currentIndex = room.currentIndex + 1;
-            console.log('questionss', room.questions.length, room.currentIndex)
             if(room.currentIndex === room.questions.length) {
                 room.inGame = false;
                 resolve(room);
