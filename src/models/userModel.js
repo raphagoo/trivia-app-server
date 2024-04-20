@@ -8,7 +8,8 @@ let SALT_WORK_FACTOR = 10;
 export const UserSchema = new Schema({
     username: {
         type: String,
-        required: 'Username required'
+        required: 'Username required',
+        unique: true
     },
     password: {
         type: String,

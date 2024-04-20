@@ -10,7 +10,7 @@ function generateRefreshToken(user) {
 }
 
 function generateAccessToken(user) {
-    return jwt.sign({data: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    return jwt.sign({data: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5s' });
 }
 
 export const createUser = (req, res) => {
@@ -21,13 +21,17 @@ export const createUser = (req, res) => {
         let response = {user: user, token: token, refresh: refreshToken}
         res.status(201).json(response);
     }).catch((err) => {
-        res.status(400).send(err);
+        if (err.code === 11000) {
+            res.status(409).json('Username is already taken');
+        } else {
+            res.status(400).send(err);
+        }
     })
 };
 export const refreshToken = (req, res) => {
     let token = req.headers['x-access-token'] || req.headers['authorization'];
     
-    if (token.startsWith('Bearer ')) {
+    if (token && token.startsWith('Bearer ')) {
         // Remove Bearer from string
         token = token.slice(7, token.length);
     }
@@ -38,8 +42,8 @@ export const refreshToken = (req, res) => {
         if (err) {
             return res.sendStatus(401)
         }
-        const refreshedToken = generateAccessToken(user);
-        res.send({
+        const refreshedToken = generateAccessToken(user.data);
+        res.status(200).json({
             token: refreshedToken
         });
     });
@@ -49,7 +53,6 @@ export const createGuestUser = (req, res) => {
     let newUser = new User();
     newUser.username = 'guest-' + Math.random().toString(16).slice(2);
     newUser.password = 'password';
-    console.log(newUser)
     newUser.save().then((user) => {
         let token = generateAccessToken(user);
         let response = {user: user, token: token}
