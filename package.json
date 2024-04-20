@@ -21,9 +21,9 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
-    "mongoose": "^8.3.0",
+    "mongoose": "^8.3.2",
     "mongoose-autopopulate": "^1.1.0",
-    "openai": "^4.32.1",
+    "openai": "^4.38.1",
     "palm-api": "^1.1.1",
     "pptxgenjs": "^3.12.0",
     "socket.io": "^4.7.5"
