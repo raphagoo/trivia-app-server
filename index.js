@@ -3,6 +3,8 @@ let app = express();
 import http from 'http';
 let server = http.createServer(app);
 import { Server } from "socket.io";
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 const io = new Server(server, {
@@ -35,7 +37,7 @@ app.use((req, res, next) => {
 
 // mongoose connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/trivia-app');
+mongoose.connect('mongodb+srv://'+ process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@cluster0.l1ezokn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/trivia-app');
 
 // Routes initialisation
 userRoutes(app);
