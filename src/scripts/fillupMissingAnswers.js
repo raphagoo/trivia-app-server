@@ -1,16 +1,14 @@
-import mongoose, { set } from 'mongoose';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { QuestionSchema } from "../models/questionModel.js";
 import { AnswerSchema } from '../models/answerModel.js';
 const Question = mongoose.model('Question', QuestionSchema);
 const Answer = mongoose.model('Answer', AnswerSchema);
-import axios from 'axios';
-import OpenAI from 'openai';
-import { ChatGPTAPI } from 'chatgpt'
+import { ChatGPTAPI } from 'chatgpt';
 dotenv.config();
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/trivia-app');
+mongoose.connect(process.env.MONGODB_URL);
 
 
 const api = new ChatGPTAPI({

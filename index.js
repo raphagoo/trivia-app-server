@@ -9,7 +9,7 @@ dotenv.config();
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL,
+        origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : "http://localhost:8080",
         methods: ["GET", "POST"]
     }
 });
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 // mongoose connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb+srv://'+ process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@cluster0.l1ezokn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/trivia-app');
+mongoose.connect(process.env.NODE_ENV === 'production' ? process.env.MONGODB_URL : 'mongodb://localhost/trivia-app');
 
 // Routes initialisation
 userRoutes(app);

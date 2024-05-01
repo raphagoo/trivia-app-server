@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
 export function verifyJwt(req){
     let tokenVerified = false

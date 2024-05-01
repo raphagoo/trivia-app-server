@@ -1,6 +1,6 @@
 {
-  "name": "my-node-starter",
-  "version": "1.1.0",
+  "name": "trivia-app-api",
+  "version": "0.0.1",
   "description": "API",
   "main": "index.js",
   "scripts": {
