@@ -26,7 +26,7 @@ jobs:
     - name: Set up test database
       run: |
         echo "MONGO_TEST_URL=mongodb://localhost:27017/trivia-app-test" >> .env
-        node ./src/fixtures/loadFixtures.js
+        npm run fixtures
 
     - name: Run tests
       run: npm test
