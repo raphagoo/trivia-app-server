@@ -37,7 +37,23 @@ app.use((req, res, next) => {
 
 // mongoose connection
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.NODE_ENV === 'production' ? process.env.MONGODB_URL : 'mongodb://localhost/trivia-app');
+let dbUrl;
+switch (process.env.NODE_ENV) {
+    case 'production':
+        dbUrl = process.env.MONGODB_URL;
+        break;
+    case 'test':
+        dbUrl = process.env.MONGO_TEST_URL;
+        break;
+    case 'development':
+        dbUrl = 'mongodb://localhost/trivia-app';
+        break;
+    default:
+        console.error('Invalid NODE_ENV value');
+        process.exit(1);
+}
+
+mongoose.connect(dbUrl);
 
 // Routes initialisation
 userRoutes(app);

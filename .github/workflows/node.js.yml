@@ -25,7 +25,7 @@ jobs:
 
     - name: Set up test database
       run: |
-        echo "MONGO_TEST_URL=mongodb://localhost:27017/trivia-app-test" >> .env
+        sed -i 's/^NODE_ENV=.*$/NODE_ENV=test/' .env
         npm run fixtures
 
     - name: Run tests
