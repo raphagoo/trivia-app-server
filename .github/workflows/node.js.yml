@@ -26,6 +26,8 @@ jobs:
     - name: Set up test database
       run: |
         echo "MONGO_TEST_URL=mongodb://localhost:27017/trivia-app-test" >> .env
+        echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" >> .env
+        echo "REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}" >> .env
         echo "NODE_ENV=test" >> .env
         npm run fixtures
 
