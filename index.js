@@ -66,6 +66,8 @@ async function logUsers() {
     }
 }
 
+console.log(process.env.ACCESS_TOKEN_SECRET)
+
 await logUsers();
 
 // Routes initialisation
