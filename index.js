@@ -23,6 +23,8 @@ import { triviaRoutes } from './src/routes/triviaRoutes.js';
 import { endGame, removeUserFromRoom, startGame, nextQuestion } from './src/controllers/roomController.js';
 import { checkAnswer } from './src/controllers/answerController.js';
 import { getQuestions } from './src/controllers/triviaController.js';
+import { UserSchema } from './src/models/userModel.js';
+const User = mongoose.model('User', UserSchema);
 
 
 
@@ -54,6 +56,13 @@ switch (process.env.NODE_ENV) {
 }
 
 mongoose.connect(dbUrl);
+
+User.find({})
+    .then((users) => {
+        console.log(users);
+    }).catch((err) => {
+        console.log(err);
+    });
 
 // Routes initialisation
 userRoutes(app);
