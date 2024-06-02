@@ -57,12 +57,16 @@ switch (process.env.NODE_ENV) {
 
 mongoose.connect(dbUrl);
 
-User.find({})
-    .then((users) => {
+async function logUsers() {
+    try {
+        const users = await User.find();
         console.log(users);
-    }).catch((err) => {
-        console.log(err);
-    });
+    } catch (error) {
+        console.error('Error retrieving users:', error);
+    }
+}
+
+await logUsers();
 
 // Routes initialisation
 userRoutes(app);

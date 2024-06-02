@@ -17,12 +17,16 @@ await Promise.all(fixtures.users.map(async (fixture) => {
     await user.save();
 }));
 
-User.find({})
-    .then((users) => {
+async function logUsers() {
+    try {
+        const users = await User.find();
         console.log(users);
-    }).catch((err) => {
-        console.log(err);
-    });
+    } catch (error) {
+        console.error('Error retrieving users:', error);
+    }
+}
+
+await logUsers();
 
 console.log('Fixtures loaded successfully!');
 
