@@ -72,6 +72,9 @@ await logUsers();
 userRoutes(app);
 roomRoutes(app);
 triviaRoutes(app);
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
 
 // Define a connection event for Socket.io
 io.on('connection', (socket) => {
