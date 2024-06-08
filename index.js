@@ -23,8 +23,6 @@ import { triviaRoutes } from './src/routes/triviaRoutes.js';
 import { endGame, removeUserFromRoom, startGame, nextQuestion } from './src/controllers/roomController.js';
 import { checkAnswer } from './src/controllers/answerController.js';
 import { getQuestions } from './src/controllers/triviaController.js';
-import { UserSchema } from './src/models/userModel.js';
-const User = mongoose.model('User', UserSchema);
 
 
 
@@ -56,17 +54,6 @@ switch (process.env.NODE_ENV) {
 }
 
 mongoose.connect(dbUrl);
-
-async function logUsers() {
-    try {
-        const users = await User.find();
-        console.log(users);
-    } catch (error) {
-        console.error('Error retrieving users:', error);
-    }
-}
-
-await logUsers();
 
 // Routes initialisation
 userRoutes(app);
@@ -137,3 +124,4 @@ server.listen(3000,
     console.log('Server running on port 3000'),
 );
 
+module.exports = server;
