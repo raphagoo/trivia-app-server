@@ -85,10 +85,8 @@ export const getUser = (req, res) => {
 };
 
 export const login = (req, res) => {
-    res.status(200).json(req.body)
     User.findOne({username: req.body.username})
     .then((user) => {
-        res.status(200).json(user)
         if (user === null) {
             res.sendStatus(404)
         }
