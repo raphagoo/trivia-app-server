@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import fixtures from './fixtures.js';
 import { UserSchema } from '../src/models/userModel.js';
+import { RoomSchema } from '../src/models/roomModel.js';
 const User = mongoose.model('User', UserSchema);
+const Room = mongoose.model('Room', RoomSchema);
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,16 +19,12 @@ await Promise.all(fixtures.users.map(async (fixture) => {
     await user.save();
 }));
 
-async function logUsers() {
-    try {
-        const users = await User.find();
-        console.log(users);
-    } catch (error) {
-        console.error('Error retrieving users:', error);
-    }
-}
-
-await logUsers();
+await Promise.all(fixtures.rooms.map(async (fixture) => {
+    let room = new Room(fixture);
+    room.owner = await User.findOne({username: 'user 2'});
+    room.users.push(await User.findOne({username: 'user 2'}))
+    await room.save();
+}));
 
 console.log('Fixtures loaded successfully!');
 
