@@ -98,7 +98,7 @@ export const login = (req, res) => {
                     const response = {user: user, token: token, refresh: refreshToken}
                     res.status(200).json(response)
                 } else {
-                    res.sendStatus(403)
+                    res.sendStatus(404)
                 } 
             });
         }
