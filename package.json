@@ -9,7 +9,8 @@
     "scripts": "node ./src/scripts/fillupMissingAnswers.js",
     "dev": "nodemon ./index.js --exec babel-node -e js",
     "debug": "nodemon --inspect ./index.js",
-    "fixtures": "node ./fixtures/loadFixtures.js"
+    "fixtures": "node ./fixtures/loadFixtures.js",
+    "test-axios": "node ./fixtures/testAxios.js"
   },
   "author": "agostinir",
   "license": "MIT",
