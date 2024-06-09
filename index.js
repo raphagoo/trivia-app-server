@@ -59,6 +59,9 @@ mongoose.connect(dbUrl);
 userRoutes(app);
 roomRoutes(app);
 triviaRoutes(app);
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
 
 // Define a connection event for Socket.io
 io.on('connection', (socket) => {
@@ -117,7 +120,6 @@ io.on('connection', (socket) => {
 });
 
 
-server.listen(process.env.PORT || 3000,
-    console.log(`listening`)
+server.listen(3000,
+    console.log('Server running on port 3000'),
 );
-

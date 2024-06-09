@@ -6,9 +6,8 @@ dotenv.config();
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_TEST_URL);
 
-
-afterAll(() => {
-    mongoose.connection.close();
+afterAll(async () => {
+    await mongoose.connection.close();
 });
 
 test('There is a User', async () => {
