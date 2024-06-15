@@ -47,6 +47,11 @@ export const removeUserFromRoom = (payload) => {
     .then((room) => {
         if(room.users.length === 0) {
             Room.findOneAndDelete({"_id": payload.room})
+            .then(() => {
+                
+            }).catch((err) => {
+                console.log(err)
+            });
         }
     }).catch((err) => {
         console.log(err)
