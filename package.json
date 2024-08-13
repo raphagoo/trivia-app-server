@@ -26,7 +26,7 @@
     "mongoose": "^8.5.2",
     "mongoose-autopopulate": "^1.1.0",
     "mongoose-fixtures": "^0.0.1",
-    "openai": "^4.53.2",
+    "openai": "^4.55.1",
     "palm-api": "^1.1.1",
     "pptxgenjs": "^3.12.0",
     "socket.io": "^4.7.5"
