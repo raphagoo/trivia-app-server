@@ -15,7 +15,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "axios": "^1.7.9",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "chat-gpt-authenticator": "^0.5.0",
     "chatgpt": "^5.2.5",
@@ -23,17 +23,17 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
-    "mongoose": "^8.9.5",
+    "mongoose": "^8.12.2",
     "mongoose-autopopulate": "^1.1.0",
     "mongoose-fixtures": "^0.0.1",
-    "openai": "^4.81.0",
+    "openai": "^4.89.0",
     "palm-api": "^1.1.1",
     "pptxgenjs": "^3.12.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
-    "@babel/core": "^7.26.7",
+    "@babel/core": "^7.26.10",
     "@babel/node": "^7.26.0",
     "@babel/plugin-transform-class-properties": "^7.25.9",
     "@babel/plugin-proposal-decorators": "^7.25.9",
@@ -51,7 +51,7 @@
     "@babel/plugin-proposal-throw-expressions": "^7.25.9",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/preset-env": "^7.26.7",
+    "@babel/preset-env": "^7.26.9",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9"
   }
