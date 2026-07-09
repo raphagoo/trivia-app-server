@@ -1,9 +1,6 @@
-import mongoose from 'mongoose';
-import { RoomSchema } from "../models/roomModel.js";
+import { Room } from "../models/roomModel.js";
+import { Question } from '../models/questionModel.js';
 import { verifyJwt } from '../services/jwtVerification.js';
-import { QuestionSchema } from '../models/questionModel.js';
-const Room = mongoose.model('Room', RoomSchema);
-const Question = mongoose.model('Question', QuestionSchema);
 
 
 export const createRoom = (req, res) => {
@@ -26,7 +23,7 @@ export const createRoom = (req, res) => {
 export const joinRoom = (req, res) => {
     let token = verifyJwt(req)
     if(token) {
-        Room.findOneAndUpdate({"_id": req.params.id}, {$push: {users: token.data}}, {new: true, useFindAndModify: false})
+        Room.findOneAndUpdate({"_id": req.params.id}, {$push: {users: token.data}}, {returnDocument: 'after'})
         .then((room) => {
             if(!room) {
                 res.sendStatus(404);
@@ -42,19 +39,17 @@ export const joinRoom = (req, res) => {
     }
 };
 
+// Resolves with the updated room, or null when the room was empty and got deleted (or didn't exist)
 export const removeUserFromRoom = (payload) => {
-    Room.findOneAndUpdate({"_id": payload.room}, {$pull : {'users': payload.user._id}}, {new: true, useFindAndModify: false})
+    return Room.findOneAndUpdate({"_id": payload.room}, {$pull : {'users': payload.user._id}}, {returnDocument: 'after'})
     .then((room) => {
-        if(room.users.length === 0) {
-            Room.findOneAndDelete({"_id": payload.room})
-            .then(() => {
-                
-            }).catch((err) => {
-                console.log(err)
-            });
+        if(!room) {
+            return null;
         }
-    }).catch((err) => {
-        console.log(err)
+        if(room.users.length === 0) {
+            return Room.findOneAndDelete({"_id": payload.room}).then(() => null);
+        }
+        return room;
     });
 }
 
@@ -81,7 +76,7 @@ export const getRoom = (req, res) => {
 };
 
 export const updateRoom = (req, res) => {
-    Room.findOneAndUpdate({"_id": req.params.id}, req.body, {new: true, useFindAndModify: false})
+    Room.findOneAndUpdate({"_id": req.params.id}, req.body, {returnDocument: 'after'})
     .then((room) => {
         if(room) {
             res.status(200).json(room);
@@ -107,14 +102,7 @@ export const deleteRoom = (req, res) => {
 };
 
 export const startGame = (payload) => {
-    return new Promise((resolve, reject) => {
-        Room.findOneAndUpdate({"_id": payload.room}, { inGame: true }, { new: true, useFindAndModify: false })
-        .then((room) => {
-            resolve(room)
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+    return Room.findOneAndUpdate({"_id": payload.room}, { inGame: true }, { returnDocument: 'after' });
 };
 
 export const getQuestion = (req, res) => {
@@ -136,43 +124,27 @@ export const getQuestion = (req, res) => {
 }
 
 export const nextQuestion = (payload) => {
-    return new Promise((resolve, reject) => {
-        Room.findById(payload.room)
-        .then(room => {
-            if (!room) {
-                reject('Room not found');
-            }
+    return Room.findById(payload.room)
+    .then(room => {
+        if (!room) {
+            return Promise.reject(new Error('Room not found'));
+        }
 
-            room.currentIndex = room.currentIndex + 1;
-            if(room.currentIndex === room.questions.length) {
-                room.inGame = false;
-                resolve(room);
-            } else {
-                room.currentQuestion = room.questions[room.currentIndex].question;
-                room.save()
-                .then((room) => {
-                    Question.findById(room.currentQuestion)
-                    .then((question) => {
-                        resolve({room, question});
-                    }).catch((err) => {
-                        reject(err);
-                    });
-                }).catch((err) => {
-                    reject(err);
-                });
-            }
-        })
+        room.currentIndex = room.currentIndex + 1;
+        if(room.currentIndex === room.questions.length) {
+            room.inGame = false;
+            return room;
+        }
+        room.currentQuestion = room.questions[room.currentIndex].question;
+        return room.save()
+        .then((room) => {
+            return Question.findById(room.currentQuestion)
+            .then((question) => ({room, question}));
+        });
     })
 }
 
 
 export const endGame = (payload) => {
-    return new Promise((resolve, reject) => {
-        Room.findOneAndUpdate({"_id": payload.room}, { inGame: false, difficulties: '', time: '', tags: '', currentIndex: 0, currentQuestion: null, questions: [] }, { new: true, useFindAndModify: false })
-        .then((room) => {
-            resolve(room)
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+    return Room.findOneAndUpdate({"_id": payload.room}, { inGame: false, difficulties: '', time: '', tags: '', currentIndex: 0, currentQuestion: null, questions: [] }, { returnDocument: 'after' });
 };

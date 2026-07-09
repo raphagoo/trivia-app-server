@@ -1,27 +1,16 @@
-import mongoose from 'mongoose';
-import { AnswerSchema } from '../models/answerModel.js';
-const Answer = mongoose.model('Answer', AnswerSchema);
+import { Answer } from '../models/answerModel.js';
 
 
 export const checkAnswer = (payload) => {
-    return new Promise((resolve, reject) => {
-        Answer.find({question: payload.question._id})
-        .then((answers) => {
-            let enteredAnswer = answers.find((answer) => {
-                return answer._id == payload.answer._id;
-            })
-            if(typeof enteredAnswer !== 'undefined' && enteredAnswer.correct) {
-                resolve({answerCorrectId: enteredAnswer._id, correct: enteredAnswer.correct});
-            }
-            else {
-                let correctAnswer = answers.find((answer) => {
-                    return answer.correct;
-                })
-                resolve({answerCorrectId: correctAnswer._id, correct: false});
-            }
+    return Answer.find({question: payload.question._id})
+    .then((answers) => {
+        const enteredAnswer = answers.find((answer) => {
+            return String(answer._id) === String(payload.answer && payload.answer._id);
         })
-        .catch((err) => {
-            reject(err);
-        });
+        if(enteredAnswer && enteredAnswer.correct) {
+            return {answerCorrectId: enteredAnswer._id, correct: true};
+        }
+        const correctAnswer = answers.find((answer) => answer.correct);
+        return {answerCorrectId: correctAnswer._id, correct: false};
     });
 };

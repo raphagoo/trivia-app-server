@@ -58,3 +58,5 @@ export const RoomSchema = new Schema({
     }
 });
 RoomSchema.plugin(autopopulate);
+
+export const Room = mongoose.model('Room', RoomSchema);

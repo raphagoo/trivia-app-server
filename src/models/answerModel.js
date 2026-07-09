@@ -21,3 +21,5 @@ export const AnswerSchema = new Schema({
     },
 });
 AnswerSchema.plugin(autopopulate);
+
+export const Answer = mongoose.model('Answer', AnswerSchema);
