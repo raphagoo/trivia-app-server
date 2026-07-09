@@ -5,7 +5,7 @@ import { RoomSchema } from '../src/models/roomModel.js';
 const User = mongoose.model('User', UserSchema);
 const Room = mongoose.model('Room', RoomSchema);
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ quiet: true });
 
 // Connect to the test database
 mongoose.connect(process.env.MONGO_TEST_URL);

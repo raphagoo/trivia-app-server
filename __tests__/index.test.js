@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { UserSchema } from '../src/models/userModel';
 const User = mongoose.model('User', UserSchema);
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ quiet: true });
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_TEST_URL);
 
