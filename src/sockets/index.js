@@ -101,6 +101,13 @@ export const registerSocketHandlers = (io) => {
             .catch((err) => emitError('check_answer', err));
         });
 
+        socket.on('chat_message', (payload) => {
+            const roomId = resolveRoomId(payload) || socket.data.roomId;
+            const message = String(payload && payload.message || '').slice(0, 500).trim();
+            if (!roomId || !message) return;
+            emitToRoom(roomId, 'chat_message', { room: roomId, user: payload.user, message, timestamp: Date.now() });
+        });
+
         socket.on('end_game', payload => {
             endGame(payload)
             .then((room) => {

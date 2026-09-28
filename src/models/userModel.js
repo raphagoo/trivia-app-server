@@ -14,6 +14,12 @@ export const UserSchema = new Schema({
     password: {
         type: String,
         required: 'Password required'
+    },
+    stats: {
+        gamesPlayed: { type: Number, default: 0 },
+        totalScore: { type: Number, default: 0 },
+        correctAnswers: { type: Number, default: 0 },
+        totalAnswers: { type: Number, default: 0 },
     }
 });
 

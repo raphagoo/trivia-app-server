@@ -1,5 +1,6 @@
 import { Room } from "../models/roomModel.js";
 import { Question } from '../models/questionModel.js';
+import { User } from '../models/userModel.js';
 import { verifyJwt } from '../services/jwtVerification.js';
 
 
@@ -146,5 +147,13 @@ export const nextQuestion = (payload) => {
 
 
 export const endGame = (payload) => {
-    return Room.findOneAndUpdate({"_id": payload.room}, { inGame: false, difficulties: '', time: '', tags: '', currentIndex: 0, currentQuestion: null, questions: [] }, { returnDocument: 'after' });
+    return Room.findOneAndUpdate({"_id": payload.room}, { inGame: false, difficulties: '', time: '', tags: '', currentIndex: 0, currentQuestion: null, questions: [] }, { returnDocument: 'after' })
+    .then((room) => {
+        if (room && room.users.length > 0) {
+            const userIds = room.users.map((user) => user._id);
+            return User.updateMany({"_id": {$in: userIds}}, {$inc: {'stats.gamesPlayed': 1}})
+            .then(() => room);
+        }
+        return room;
+    });
 };
