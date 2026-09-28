@@ -1,9 +1,6 @@
-import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { UserSchema } from "../models/userModel.js";
+import { User } from "../models/userModel.js";
 import bcrypt from 'bcrypt';
-
-const User = mongoose.model('User', UserSchema);
 
 function generateRefreshToken(user) {
     return jwt.sign({data: user}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1y' });
@@ -106,7 +103,7 @@ export const login = (req, res) => {
 };
 
 export const updateUser = (req, res) => {
-    User.findOneAndUpdate({"_id": req.params.id}, req.body, {new: true, useFindAndModify: false})
+    User.findOneAndUpdate({"_id": req.params.id}, req.body, {returnDocument: 'after'})
     .then((user) => {
         if(user) {
             res.status(200).json(user);

@@ -48,3 +48,5 @@ export const QuestionSchema = new Schema({
     }
 });
 QuestionSchema.plugin(autopopulate);
+
+export const Question = mongoose.model('Question', QuestionSchema);
