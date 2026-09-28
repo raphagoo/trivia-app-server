@@ -124,23 +124,40 @@ export const getQuestion = (req, res) => {
     });
 }
 
+// Multiple tabs/devices for the room owner each schedule their own client-side
+// timer and independently emit next_question for the same round. The update
+// below is conditioned on the currentIndex/inGame values just read, so only
+// the first caller for a given round actually advances the room; concurrent or
+// late duplicate calls find no matching document, fall back to the
+// already-advanced state, and re-report it instead of skipping ahead or
+// indexing past the end of room.questions.
 export const nextQuestion = (payload) => {
     return Room.findById(payload.room)
     .then(room => {
         if (!room) {
             return Promise.reject(new Error('Room not found'));
         }
-
-        room.currentIndex = room.currentIndex + 1;
-        if(room.currentIndex === room.questions.length) {
-            room.inGame = false;
+        if (!room.inGame) {
             return room;
         }
-        room.currentQuestion = room.questions[room.currentIndex].question;
-        return room.save()
-        .then((room) => {
-            return Question.findById(room.currentQuestion)
-            .then((question) => ({room, question}));
+
+        const nextIndex = room.currentIndex + 1;
+        const update = nextIndex >= room.questions.length
+            ? { inGame: false }
+            : { currentIndex: nextIndex, currentQuestion: room.questions[nextIndex].question };
+
+        return Room.findOneAndUpdate(
+            { _id: room._id, currentIndex: room.currentIndex, inGame: true },
+            update,
+            { returnDocument: 'after' }
+        )
+        .then((updatedRoom) => updatedRoom || Room.findById(room._id))
+        .then((currentRoom) => {
+            if (!currentRoom.inGame) {
+                return currentRoom;
+            }
+            return Question.findById(currentRoom.currentQuestion)
+            .then((question) => ({room: currentRoom, question}));
         });
     })
 }
