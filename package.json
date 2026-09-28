@@ -30,5 +30,8 @@
     "@babel/preset-env": "^8.0.6",
     "jest": "^30.5.2",
     "nodemon": "^3.1.14"
+  },
+  "overrides": {
+    "mongodb": "7.5.0"
   }
 }
